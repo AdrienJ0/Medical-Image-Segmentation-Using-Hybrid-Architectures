@@ -103,12 +103,12 @@ torchsummary.summary(model_test, input_size=(3, 128, 128))
 #Passing the Dataset of Images and Labels
 #######################################################
 
-t_data = '' #Input data
-l_data = '' #Input label
-test_image = '/flush1/bat161/segmentation/New_Trails/venv/DATA/test_new_3C_I_ori/0131_0009.png'
-test_label = '/flush1/bat161/segmentation/New_Trails/venv/DATA/test_new_3C_L_ori/0131_0009.png'
-test_folderP = '/flush1/bat161/segmentation/New_Trails/venv/DATA/test_new_3C_I_ori/*'
-test_folderL = '/flush1/bat161/segmentation/New_Trails/venv/DATA/test_new_3C_L_ori/*'
+t_data = 'data/2d_synapse_dataset/2d_training_images' #Input data
+l_data = 'data/2d_synapse_dataset/2d_training_labels' #Input label
+test_image = '' #Image to be predicted while training
+test_label = '' #Label of the prediction Image
+test_folderP = '' #Test folder Image
+test_folderL = '' #Test folder Label for calculating the Dice score
 
 Training_Data = Images_Dataset_folder(t_data,
                                       l_data)
