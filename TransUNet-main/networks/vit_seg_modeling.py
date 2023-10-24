@@ -118,7 +118,11 @@ class Mlp(nn.Module):
         x = self.dropout(x)
         return x
 
-
+#This class will be used as the first layer of the class Transformer used in the class VisionTransformer
+#It has 3 arguments:
+#  config: the type of configuration of the model (R50-ViT-B_16, ViT-B_16...)
+#  img_size:
+#  in_channels: the number of channels (colors like rgb...) of the image
 class Embeddings(nn.Module):
     """Construct the embeddings from patch, position embeddings.
     """
@@ -142,10 +146,14 @@ class Embeddings(nn.Module):
         if self.hybrid:
             self.hybrid_model = ResNetV2(block_units=config.resnet.num_layers, width_factor=config.resnet.width_factor)
             in_channels = self.hybrid_model.width * 16
+            
+        
         self.patch_embeddings = Conv2d(in_channels=in_channels,
                                        out_channels=config.hidden_size,
                                        kernel_size=patch_size,
                                        stride=patch_size)
+        
+        
         self.position_embeddings = nn.Parameter(torch.zeros(1, n_patches, config.hidden_size))
 
         self.dropout = Dropout(config.transformer["dropout_rate"])
@@ -243,11 +251,19 @@ class Encoder(nn.Module):
         encoded = self.encoder_norm(hidden_states)
         return encoded, attn_weights
 
-
+#This class will be used as the first layer of the class Vision Transformer
+#The class "Transformer" has 03 arguments:
+#   config: the type of configuration of the model (R50-ViT-B_16, ViT-B_16...)
+#   img_size: the size of the image
+#   vis: 
 class Transformer(nn.Module):
     def __init__(self, config, img_size, vis):
         super(Transformer, self).__init__()
+        
+        #Define the embeddings of the transformer by calling the class Embeddings
         self.embeddings = Embeddings(config, img_size=img_size)
+        
+        #Define the encoder of the transformer by calling the class Encoder
         self.encoder = Encoder(config, vis)
 
     def forward(self, input_ids):
@@ -314,7 +330,10 @@ class DecoderBlock(nn.Module):
         x = self.conv2(x)
         return x
 
-
+#This class will be used as the 3rd group of layers in the class Vision Transformer
+#It contains:
+#  - nn.Conv2d
+#  - nn.UpsamplingBilinear2d
 class SegmentationHead(nn.Sequential):
 
     def __init__(self, in_channels, out_channels, kernel_size=3, upsampling=1):
@@ -323,6 +342,10 @@ class SegmentationHead(nn.Sequential):
         super().__init__(conv2d, upsampling)
 
 
+#This class will be used as the second layer of the class Vision Transformer
+#It contains: 
+#  - The Conv2dReLU
+#  - The DecoderBlock
 class DecoderCup(nn.Module):
     def __init__(self, config):
         super().__init__()
@@ -366,20 +389,35 @@ class DecoderCup(nn.Module):
             x = decoder_block(x, skip=skip)
         return x
 
-
+#This class contains 05 parameters:
+#   config -> the type of configuration of the model (R50-ViT-B_16, ViT-B_16...)
+#   img_size -> the size of the input image
+#   num_classes -> the num_classes of the output
+#   zero_head -> ?
+#   vis -> ?
 class VisionTransformer(nn.Module):
     def __init__(self, config, img_size=224, num_classes=21843, zero_head=False, vis=False):
         super(VisionTransformer, self).__init__()
+        # Define the values of the parameters
         self.num_classes = num_classes
         self.zero_head = zero_head
+        
+        
         self.classifier = config.classifier
+        
+        #Defin the transformer layer by calling the class Transformer with the parameter "config", "img_size" and "vis"
         self.transformer = Transformer(config, img_size, vis)
+        
+        #Define the decoder layer by calling the class DecoderCup with the parameter "config"
         self.decoder = DecoderCup(config)
+        
+        #Define the segmentation head by calling the class Segmentation Head
         self.segmentation_head = SegmentationHead(
             in_channels=config['decoder_channels'][-1],
             out_channels=config['n_classes'],
             kernel_size=3,
         )
+        
         self.config = config
 
     def forward(self, x):
