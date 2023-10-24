@@ -100,7 +100,7 @@ if __name__ == "__main__":
         
     #net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cpu()
     
-    net = U_Net(in_ch = 1, out_ch = 1).cpu()
+    net = U_Net(in_ch = 1, out_ch = 9).cpu()
 
     #net.load_from(weights=np.load(config_vit.pretrained_path))
 
