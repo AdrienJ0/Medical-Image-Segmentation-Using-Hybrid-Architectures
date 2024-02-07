@@ -428,6 +428,7 @@ class VisionTransformer(nn.Module):
         logits = self.segmentation_head(x)
         return logits
 
+    # Function which load the pretained weights of the config choosed
     def load_from(self, weights):
         with torch.no_grad():
 
