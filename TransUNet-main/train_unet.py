@@ -5,8 +5,9 @@ import random
 import numpy as np
 import torch
 import torch.backends.cpu as cudnn
-from networks.vit_seg_modeling import VisionTransformer as ViT_seg
-from networks.vit_seg_modeling import CONFIGS as CONFIGS_ViT_seg
+#from networks.vit_seg_modeling import VisionTransformer as ViT_seg
+#from networks.vit_seg_modeling import CONFIGS as CONFIGS_ViT_seg
+from networks.unet_modeling import U_Net
 from trainer import trainer_synapse
 
 #Definition of some arguments to put while running the code in the terminal
@@ -21,9 +22,9 @@ parser.add_argument('--list_dir', type=str,
 parser.add_argument('--num_classes', type=int,
                     default=9, help='output channel of network')
 parser.add_argument('--max_iterations', type=int,
-                    default=30000, help='maximum epoch number to train')
+                    default=1000, help='maximum epoch number to train')
 parser.add_argument('--max_epochs', type=int,
-                    default=150, help='maximum epoch number to train')
+                    default=2, help='maximum epoch number to train')
 parser.add_argument('--batch_size', type=int,
                     default=24, help='batch_size per gpu')
 parser.add_argument('--n_gpu', type=int, default=1, help='total gpu')
@@ -89,16 +90,19 @@ if __name__ == "__main__":
         os.makedirs(snapshot_path)
         
     #Define the configuration of the Vit to use (by default R50-ViT-B_16)-> It corresponds to the function get_r50_b16_config() in the file vit_seg_configs.py)
-    config_vit = CONFIGS_ViT_seg[args.vit_name]
-    config_vit.n_classes = args.num_classes #Update the num_classes of the configuration
-    config_vit.n_skip = args.n_skip #Update the n_skip of the configuration
+    #config_vit = CONFIGS_ViT_seg[args.vit_name]
+    #config_vit.n_classes = args.num_classes #Update the num_classes of the configuration
+    #config_vit.n_skip = args.n_skip #Update the n_skip of the configuration
     
     #Define the 'pathes_grid' of the configuration (image_shape ?)
-    if args.vit_name.find('R50') != -1:
-        config_vit.patches.grid = (int(args.img_size / args.vit_patches_size), int(args.img_size / args.vit_patches_size))
+    #if args.vit_name.find('R50') != -1:
+    #    config_vit.patches.grid = (int(args.img_size / args.vit_patches_size), int(args.img_size / args.vit_patches_size))
         
-    net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cpu()
-    net.load_from(weights=np.load(config_vit.pretrained_path))
+    #net = ViT_seg(config_vit, img_size=args.img_size, num_classes=config_vit.n_classes).cpu()
+    
+    net = U_Net(in_ch = 1, out_ch = 9).cpu()
+
+    #net.load_from(weights=np.load(config_vit.pretrained_path))
 
     trainer = {'Synapse': trainer_synapse,}
     trainer[dataset_name](args, net, snapshot_path)

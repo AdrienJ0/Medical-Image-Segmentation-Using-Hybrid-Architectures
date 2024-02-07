@@ -103,12 +103,12 @@ torchsummary.summary(model_test, input_size=(3, 128, 128))
 #Passing the Dataset of Images and Labels
 #######################################################
 
-t_data = '' #Input data
-l_data = '' #Input label
-test_image = '/flush1/bat161/segmentation/New_Trails/venv/DATA/test_new_3C_I_ori/0131_0009.png'
-test_label = '/flush1/bat161/segmentation/New_Trails/venv/DATA/test_new_3C_L_ori/0131_0009.png'
-test_folderP = '/flush1/bat161/segmentation/New_Trails/venv/DATA/test_new_3C_I_ori/*'
-test_folderL = '/flush1/bat161/segmentation/New_Trails/venv/DATA/test_new_3C_L_ori/*'
+t_data = 'data/2d_synapse_dataset/2d_training_images' #Input data
+l_data = 'data/2d_synapse_dataset/2d_training_labels' #Input label
+test_image = 'data/2d_synapse_dataset/2d_training_images/0.png' #Image to be predicted while training
+test_label = 'data/2d_synapse_dataset/2d_training_labels/0.png' #Label of the prediction Image
+test_folderP = 'data/2d_synapse_dataset/2d_training_images' #Test folder Image
+test_folderL = 'data/2d_synapse_dataset/2d_training_labels' #Test folder Label for calculating the Dice score
 
 Training_Data = Images_Dataset_folder(t_data,
                                       l_data)
@@ -230,8 +230,9 @@ for i in range(epoch):
     train_loss = 0.0
     valid_loss = 0.0
     since = time.time()
-    scheduler.step(i)
-    lr = scheduler.get_lr()
+    opt.step()
+    scheduler.step()
+    lr = scheduler.get_last_lr()[0]
 
     #######################################################
     #Training Data
@@ -239,139 +240,139 @@ for i in range(epoch):
 
     model_test.train()
     k = 1
+    if __name__ == '__main__':
+        for x, y in train_loader:
+            x, y = x.to(device), y.to(device)
 
-    for x, y in train_loader:
-        x, y = x.to(device), y.to(device)
+            #If want to get the input images with their Augmentation - To check the data flowing in net
+            input_images(x, y, i, n_iter, k)
 
-        #If want to get the input images with their Augmentation - To check the data flowing in net
-        input_images(x, y, i, n_iter, k)
+        # grid_img = torchvision.utils.make_grid(x)
+            #writer1.add_image('images', grid_img, 0)
 
-       # grid_img = torchvision.utils.make_grid(x)
-        #writer1.add_image('images', grid_img, 0)
+        # grid_lab = torchvision.utils.make_grid(y)
 
-       # grid_lab = torchvision.utils.make_grid(y)
+            opt.zero_grad()
 
-        opt.zero_grad()
+            y_pred = model_test(x)
+            lossT = calc_loss(y_pred, y)     # Dice_loss Used
 
-        y_pred = model_test(x)
-        lossT = calc_loss(y_pred, y)     # Dice_loss Used
+            train_loss += lossT.item() * x.size(0)
+            lossT.backward()
+        #  plot_grad_flow(model_test.named_parameters(), n_iter)
+            opt.step()
+            x_size = lossT.item() * x.size(0)
+            k = 2
 
-        train_loss += lossT.item() * x.size(0)
-        lossT.backward()
-      #  plot_grad_flow(model_test.named_parameters(), n_iter)
-        opt.step()
-        x_size = lossT.item() * x.size(0)
-        k = 2
-
-    #    for name, param in model_test.named_parameters():
-    #        name = name.replace('.', '/')
-    #        writer1.add_histogram(name, param.data.cpu().numpy(), i + 1)
-    #        writer1.add_histogram(name + '/grad', param.grad.data.cpu().numpy(), i + 1)
-
-
-    #######################################################
-    #Validation Step
-    #######################################################
-
-    model_test.eval()
-    torch.no_grad() #to increase the validation process uses less memory
-
-    for x1, y1 in valid_loader:
-        x1, y1 = x1.to(device), y1.to(device)
-
-        y_pred1 = model_test(x1)
-        lossL = calc_loss(y_pred1, y1)     # Dice_loss Used
-
-        valid_loss += lossL.item() * x1.size(0)
-        x_size1 = lossL.item() * x1.size(0)
-
-    #######################################################
-    #Saving the predictions
-    #######################################################
-
-    im_tb = Image.open(test_image)
-    im_label = Image.open(test_label)
-    s_tb = data_transform(im_tb)
-    s_label = data_transform(im_label)
-    s_label = s_label.detach().numpy()
-
-    pred_tb = model_test(s_tb.unsqueeze(0).to(device)).cpu()
-    pred_tb = F.sigmoid(pred_tb)
-    pred_tb = pred_tb.detach().numpy()
-
-   #pred_tb = threshold_predictions_v(pred_tb)
-
-    x1 = plt.imsave(
-        './model/pred/img_iteration_' + str(n_iter) + '_epoch_'
-        + str(i) + '.png', pred_tb[0][0])
-
-  #  accuracy = accuracy_score(pred_tb[0][0], s_label)
-
-    #######################################################
-    #To write in Tensorboard
-    #######################################################
-
-    train_loss = train_loss / len(train_idx)
-    valid_loss = valid_loss / len(valid_idx)
-
-    if (i+1) % 1 == 0:
-        print('Epoch: {}/{} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}'.format(i + 1, epoch, train_loss,
-                                                                                      valid_loss))
- #       writer1.add_scalar('Train Loss', train_loss, n_iter)
-  #      writer1.add_scalar('Validation Loss', valid_loss, n_iter)
-        #writer1.add_image('Pred', pred_tb[0]) #try to get output of shape 3
+        #    for name, param in model_test.named_parameters():
+        #        name = name.replace('.', '/')
+        #        writer1.add_histogram(name, param.data.cpu().numpy(), i + 1)
+        #        writer1.add_histogram(name + '/grad', param.grad.data.cpu().numpy(), i + 1)
 
 
-    #######################################################
-    #Early Stopping
-    #######################################################
+        #######################################################
+        #Validation Step
+        #######################################################
 
-    if valid_loss <= valid_loss_min and epoch_valid >= i: # and i_valid <= 2:
+        model_test.eval()
+        torch.no_grad() #to increase the validation process uses less memory
 
-        print('Validation loss decreased ({:.6f} --> {:.6f}).  Saving model '.format(valid_loss_min, valid_loss))
-        torch.save(model_test.state_dict(),'./model/Unet_D_' +
-                                              str(epoch) + '_' + str(batch_size) + '/Unet_epoch_' + str(epoch)
-                                              + '_batchsize_' + str(batch_size) + '.pth')
-       # print(accuracy)
-        if round(valid_loss, 4) == round(valid_loss_min, 4):
-            print(i_valid)
-            i_valid = i_valid+1
-        valid_loss_min = valid_loss
-        #if i_valid ==3:
-         #   break
+        for x1, y1 in valid_loader:
+            x1, y1 = x1.to(device), y1.to(device)
 
-    #######################################################
-    # Extracting the intermediate layers
-    #######################################################
+            y_pred1 = model_test(x1)
+            lossL = calc_loss(y_pred1, y1)     # Dice_loss Used
 
-    #####################################
-    # for kernals
-    #####################################
-    x1 = torch.nn.ModuleList(model_test.children())
-    # x2 = torch.nn.ModuleList(x1[16].children())
-     #x3 = torch.nn.ModuleList(x2[0].children())
+            valid_loss += lossL.item() * x1.size(0)
+            x_size1 = lossL.item() * x1.size(0)
 
-    #To get filters in the layers
-     #plot_kernels(x1.weight.detach().cpu(), 7)
+        #######################################################
+        #Saving the predictions
+        #######################################################
 
-    #####################################
-    # for images
-    #####################################
-    x2 = len(x1)
-    dr = LayerActivations(x1[x2-1]) #Getting the last Conv Layer
+        im_tb = Image.open(test_image)
+        im_label = Image.open(test_label)
+        s_tb = data_transform(im_tb)
+        s_label = data_transform(im_label)
+        s_label = s_label.detach().numpy()
 
-    img = Image.open(test_image)
-    s_tb = data_transform(img)
+        pred_tb = model_test(s_tb.unsqueeze(0).to(device)).cpu()
+        pred_tb = F.sigmoid(pred_tb)
+        pred_tb = pred_tb.detach().numpy()
 
-    pred_tb = model_test(s_tb.unsqueeze(0).to(device)).cpu()
-    pred_tb = F.sigmoid(pred_tb)
-    pred_tb = pred_tb.detach().numpy()
+    #pred_tb = threshold_predictions_v(pred_tb)
 
-    plot_kernels(dr.features, n_iter, 7, cmap="rainbow")
+        x1 = plt.imsave(
+            './model/pred/img_iteration_' + str(n_iter) + '_epoch_'
+            + str(i) + '.png', pred_tb[0][0])
 
-    time_elapsed = time.time() - since
-    print('{:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
-    n_iter += 1
+    #  accuracy = accuracy_score(pred_tb[0][0], s_label)
+
+        #######################################################
+        #To write in Tensorboard
+        #######################################################
+
+        train_loss = train_loss / len(train_idx)
+        valid_loss = valid_loss / len(valid_idx)
+
+        if (i+1) % 1 == 0:
+            print('Epoch: {}/{} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}'.format(i + 1, epoch, train_loss,
+                                                                                        valid_loss))
+    #       writer1.add_scalar('Train Loss', train_loss, n_iter)
+    #      writer1.add_scalar('Validation Loss', valid_loss, n_iter)
+            #writer1.add_image('Pred', pred_tb[0]) #try to get output of shape 3
+
+
+        #######################################################
+        #Early Stopping
+        #######################################################
+
+        if valid_loss <= valid_loss_min and epoch_valid >= i: # and i_valid <= 2:
+
+            print('Validation loss decreased ({:.6f} --> {:.6f}).  Saving model '.format(valid_loss_min, valid_loss))
+            torch.save(model_test.state_dict(),'./model/Unet_D_' +
+                                                str(epoch) + '_' + str(batch_size) + '/Unet_epoch_' + str(epoch)
+                                                + '_batchsize_' + str(batch_size) + '.pth')
+        # print(accuracy)
+            if round(valid_loss, 4) == round(valid_loss_min, 4):
+                print(i_valid)
+                i_valid = i_valid+1
+            valid_loss_min = valid_loss
+            #if i_valid ==3:
+            #   break
+
+        #######################################################
+        # Extracting the intermediate layers
+        #######################################################
+
+        #####################################
+        # for kernals
+        #####################################
+        x1 = torch.nn.ModuleList(model_test.children())
+        # x2 = torch.nn.ModuleList(x1[16].children())
+        #x3 = torch.nn.ModuleList(x2[0].children())
+
+        #To get filters in the layers
+        #plot_kernels(x1.weight.detach().cpu(), 7)
+
+        #####################################
+        # for images
+        #####################################
+        x2 = len(x1)
+        dr = LayerActivations(x1[x2-1]) #Getting the last Conv Layer
+
+        img = Image.open(test_image)
+        s_tb = data_transform(img)
+
+        pred_tb = model_test(s_tb.unsqueeze(0).to(device)).cpu()
+        pred_tb = F.sigmoid(pred_tb)
+        pred_tb = pred_tb.detach().numpy()
+
+        plot_kernels(dr.features, n_iter, 7, cmap="rainbow")
+
+        time_elapsed = time.time() - since
+        print('{:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
+        n_iter += 1
 
 #######################################################
 #closing the tensorboard writer
