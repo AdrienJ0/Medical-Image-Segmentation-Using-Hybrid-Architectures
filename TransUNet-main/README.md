@@ -33,12 +33,12 @@ CUDA_VISIBLE_DEVICES=0 python train.py --dataset Synapse --vit_name R50-ViT-B_16
 python test.py --dataset Synapse --vit_name R50-ViT-B_16
 ```
 
-## Train Swin-Unet
+### 5. Train Swin-Unet
 ```bash
 python train_swin_unet.py --dataset Synapse --cfg configs/swin_unet.yaml --max_epochs 1 --output_dir outputs  --img_size 224 --base_lr 0.05 --batch_size 2
 ```
 
-## Test Swin-Unet
+### 6. Test Swin-Unet
 ```bash
 python test_swin_unet.py --dataset Synapse --cfg configs/swin_unet.yaml --is_saveni --output_dir outputs --max_epoch 1 --base_lr 0.05 --img_size 224 --batch_size 2
 ```
