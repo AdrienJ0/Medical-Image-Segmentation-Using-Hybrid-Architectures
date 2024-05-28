@@ -19,7 +19,7 @@ Please go to ["./datasets/README.md"](datasets/README.md) for details, or use th
 
 Please prepare an environment with python=3.7, and then use the command "pip install -r requirements.txt" for the dependencies.
 
-### 4. Train/Test
+### 4. Train/Test TransUnet
 
 - Run the train script on synapse dataset. The batch size can be reduced to 12 or 6 to save memory (please also decrease the base_lr linearly), and both can reach similar performance.
 
