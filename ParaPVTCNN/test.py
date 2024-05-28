@@ -12,7 +12,7 @@ from datasets.dataset_synapse import Synapse_dataset
 from datasets.dataset_AVT import AVT_dataset
 from utils import test_single_volume_Synapse
 from utils import test_single_volume_AVT
-from model.ParaTransCNN import ParaTransCNN
+from models.ParaPVTCNN import ParaPVTCNN
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--volume_path', type=str,

@@ -91,9 +91,9 @@ class DecoderBottleneckLayer(nn.Module):
         x = self.relu3(x)
         return x
 
-class ParaTransCNN(nn.Module):
+class ParaPVTCNN_CA_SA(nn.Module):
     def __init__(self, n_channels=3, num_classes=9, dim=320, patch_size=2):
-        super(ParaTransCNN, self).__init__()
+        super(ParaPVTCNN_CA_SA, self).__init__()
         self.num_classes = num_classes
         self.n_channels = n_channels
         self.patch_size = patch_size
