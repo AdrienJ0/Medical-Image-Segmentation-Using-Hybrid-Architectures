@@ -5,7 +5,9 @@ import numpy as np
 import torch
 import torch.backends.cudnn as cudnn
 from trainer import trainer
-from model.ParaTransCNN import ParaTransCNN
+from models.ParaPVTCNN import ParaPVTCNN
+from models.ParaPVTCNN_SA import ParaPVTCNN_SA
+from models.ParaPVTCNN_CA_SA import ParaPVTCNN_CA_SA
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--train_path', type=str,
@@ -70,5 +72,5 @@ if __name__ == "__main__":
 
     if not os.path.exists(args.checkpoint_path):
         os.makedirs(args.checkpoint_path)
-    net = ParaTransCNN(num_classes=args.num_classes).cpu()
+    net = ParaPVTCNN(num_classes=args.num_classes).cpu()
     trainer(args, net)
