@@ -118,7 +118,7 @@ if __name__ == "__main__":
     args.Dataset = dataset_config[dataset_name]['Dataset']
     args.list_dir = dataset_config[dataset_name]['list_dir']
 
-    net = ParaTransCNN(num_classes=args.num_classes).cuda()
+    net = ParaPVTCNN(num_classes=args.num_classes).cuda()
     net.load_state_dict(torch.load(args.checkpoint_path))
 
     log_folder = args.checkpoint_path
