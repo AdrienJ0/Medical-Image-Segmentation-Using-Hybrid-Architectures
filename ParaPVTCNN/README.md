@@ -1,5 +1,5 @@
 # ParaPVTCNN
-This repo is inspired from: https://github.com/hongkunsun/paratranscnn. This repo holds code for [ParaTransCNN: Parallelized TransCNN Encoder for Medical Image Segmentation](https://arxiv.org/abs/2401.15307)
+This repo is inspired from: https://github.com/hongkunsun/paratranscnn. It holds code for some modifications made on  [ParaTransCNN: Parallelized TransCNN Encoder for Medical Image Segmentation](https://arxiv.org/abs/2401.15307)
 * Overview
 ![image](/assets/ParaTransCNN.png)
 
@@ -112,5 +112,6 @@ python test.py --dataset AVT --volume_path <your path to AVT test dataset> --mod
 ![image](assets/BUSI.png)
 
 ## Reference
+* [ParaTransCNN](https://arxiv.org/abs/2401.15307)
 * [TransUNet](https://arxiv.org/abs/2102.04306)
 * [ResNet](https://arxiv.org/abs/1512.03385)
