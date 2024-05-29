@@ -6,7 +6,7 @@
 
 | Project Title | Medical Image Segmentation Using Hybrid Architectures |
 | --- | --- |
-| Goal of the project | . |
+| Goal of the project | Develop a novel hybrid Transformer-CNN architecture for the segmentation of medical images |
 | Dataset(s) used | Synapse Dataset : [https://www.synapse.org/#!Synapse:syn3193805/files/ ](https://www.synapse.org/#!Synapse:syn3193805/files/ ) |
 | Team Members | **Adrien Junior TCHUEM TCHUENTE , Abir TALHA, Abdoul Bassit NKOUONJOM YAIN, Chaimae MAAROUF, Sacha BINANZER**|
 
