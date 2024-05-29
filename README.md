@@ -6,7 +6,7 @@
 
 | Project Title | Medical Image Segmentation Using Hybrid Architectures |
 | --- | --- |
-| Goal of the project | Implement different Deep Learning models with different architectures to classify and localize lung disease from chest X-rays and observe the performance of these different methods. |
+| Goal of the project | . |
 | Dataset(s) used | Synapse Dataset : [https://www.synapse.org/#!Synapse:syn3193805/files/ ](https://www.synapse.org/#!Synapse:syn3193805/files/ ) |
 | Team Members | **Adrien Junior TCHUEM TCHUENTE , Abir TALHA, Abdoul Bassit NKOUONJOM YAIN, Chaimae MAAROUF, Sacha BINANZER**|
 
