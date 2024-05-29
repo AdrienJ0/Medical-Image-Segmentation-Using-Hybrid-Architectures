@@ -1,5 +1,5 @@
 # TransUNet
-This repo holds code for [TransUNet: Transformers Make Strong Encoders for Medical Image Segmentation](https://arxiv.org/pdf/2102.04306.pdf)
+This repo is inspired from this github repo : https://github.com/Beckschen/TransUNet/tree/main. It holds code for [TransUNet: Transformers Make Strong Encoders for Medical Image Segmentation](https://arxiv.org/pdf/2102.04306.pdf)
 
 ## Usage
 
