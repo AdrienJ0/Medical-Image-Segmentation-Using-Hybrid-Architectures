@@ -31,3 +31,8 @@ This repo contains the code in order to train and test the UNet architecture on 
 ## 2.5. GUI
 
 This repo contains the code for a graphical interface. On this interface, the physician will load a CT-Scan as input and obtain its segmentation predicted by a chosen model.
+
+![image](https://github.com/AdrienJ0/Medical-Image-Segmentation-Using-Hybrid-Architectures/assets/87979922/cdef8299-5bfb-44bc-a4bd-7ec5d6ea1a12)
+![image](https://github.com/AdrienJ0/Medical-Image-Segmentation-Using-Hybrid-Architectures/assets/87979922/78d00ce3-e323-46e7-802f-5c75e757fdd9)
+
+
