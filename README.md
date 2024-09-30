@@ -15,7 +15,7 @@
 
 ## 2.1. ParaPVTCNN
 
-This repo contains the code in order to train and test the ParaPVTCNN architecture which was implemented based on the ParaTransCNN architecture. It is inspired from this github repo: https://github.com/hongkunsun/paratranscnn
+This repository contains the code to train and test the ParaPVTCNN architecture which was implemented based on the ParaTransCNN architecture. It is inspired from this github repo: https://github.com/hongkunsun/paratranscnn
 
 ## 2.2. TransUNet
 
